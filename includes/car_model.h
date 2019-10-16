@@ -1,5 +1,5 @@
 #include<iostream>
-
+#include<vector>
 
 class Model {
     private:
@@ -19,5 +19,6 @@ class Model {
     public:
     Model();
     void command(double speed, double steering_angle);
+    std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
 };
 
