@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/includes/car_model.h
+iostream
+-
+
+/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/src/car_model.cpp
+../includes/car_model.h
+/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/includes/car_model.h
+
+/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/src/main.cpp
+../includes/car_model.h
+/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/includes/car_model.h
+

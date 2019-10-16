@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++14 -Wall   CMakeFiles/simulator.dir/src/main.cpp.o CMakeFiles/simulator.dir/src/car_model.cpp.o  -o simulator -rdynamic 
