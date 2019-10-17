@@ -1,7 +1,8 @@
 #include<iostream>
 #include<vector>
 #include<iterator>
-#include"../includes/car_model.h"
+#include"car_model.h"
+#include"path.h"
 
 
 
@@ -40,9 +41,21 @@ class Dynamic_tree {
     private:
     Model dynamic_model;
     Node grand_parent;
+    Path path;
 
     public:
-    Dynamic_tree(Model model);
+    Dynamic_tree(Model model, Path path);
+
+    bool check_position()
+    {
+        auto position_vector = dynamic_model.get_position();
+        assert(position_vector.size() == 3);
+        double x_pos = position_vector[0];
+        double y_pos = position_vector[1];
+        double yaw_angle = position_vector[2];
+        
+        return false; //TODO
+    }
     void create_children(pair<double,double> momentum_max_min, pair<double, double> angle_max_min);
     void DFS(Node *node);
 };

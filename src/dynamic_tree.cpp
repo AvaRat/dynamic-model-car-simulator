@@ -3,13 +3,13 @@
 #include"../includes/dynamic_tree.h"
 
 
-Dynamic_tree::Dynamic_tree(Model model): dynamic_model(model), grand_parent(0, 0)
+Dynamic_tree::Dynamic_tree(Model model, Path path): dynamic_model(model), path(path), grand_parent(0, 0)
 {
 }
 
 void Dynamic_tree::DFS(Node *node)
 {
-    
+
 }
 
 void Dynamic_tree::create_children(pair<double,double> momentum_max_min, pair<double, double> angle_max_min)
