@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<map>
 
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
@@ -43,9 +44,10 @@ class Model {
 
 
     public:
-    Model();
+    Model(double tau);
     void publish_pose(ros::Publisher *pub);
     void command(double torque, double steering_angle);
     std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
+    std::map<std::string, double> get_data();
 };
 
