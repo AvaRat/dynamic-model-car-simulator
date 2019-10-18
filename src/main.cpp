@@ -1,5 +1,5 @@
 #include<utility>
-#include "../include/simulator/dynamic_tree.h"
+#include "../include/dynamic_tree.h"
 
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>

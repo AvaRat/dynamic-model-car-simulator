@@ -1,6 +1,6 @@
 #include<iostream>
 #include<cassert>
-#include"../include/simulator/dynamic_tree.h"
+#include"../include/dynamic_tree.h"
 
 using array_type = vector<Node*>;
 
