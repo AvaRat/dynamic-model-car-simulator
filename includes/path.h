@@ -52,7 +52,6 @@ class Path {
             }
         assert(closests.size() == n_points);
         return closests;
-        //TODO get closest n points on our path
     }
 
     double get_starting_yaw()
