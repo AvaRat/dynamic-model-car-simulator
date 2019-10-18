@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 #include"../include/simulator/car_model.h"
 
 Model::Model()
 {
-    long_pos = 1;
-    lat_pos = 5;
-    yaw_angle = 0.57;
-
 	//zmienne stanu dla t = 0
 	yaw_rate = 0;
 	lat_vel = 0;
@@ -25,7 +20,6 @@ Model::Model()
 	g = 9,8123;
 	u = 1;
 	cf = cr = 1;
->>>>>>> model
 
 
  //   visualization_msgs::Marker marker;
@@ -106,7 +100,7 @@ void Model::command(double torque , double steering_angle)
 	yaw_angle = yaw_angle + yaw_angle * tau; //x6
 
 
-    std::cout << "command called\n";
+    std::cout << "car state changed\n";
 }
 
 std::vector<double> Model::get_position()

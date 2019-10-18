@@ -23,9 +23,16 @@ int main(int argc, char **argv)
     Model model;
     Dynamic_tree tree(&model, &path);
     tree.create_children({10.0,-5.0}, {0.78539, -0.78539});
+
+    double torque, steering_angle;
     while(ros::ok())
     {
-        model.command(0, 0);
+        cout << "\ntorque: ";
+        cin >> torque;
+        cout << "\nsteering_angle: ";
+        cin >> steering_angle;
+
+        model.command(torque, steering_angle);
         model.publish_pose(&pose_pub);
         r.sleep();
     }
