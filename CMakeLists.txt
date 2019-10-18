@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -Wall")
 include_directories(includes)
 
 # add the executable
-add_executable(simulator src/main.cpp src/car_model.cpp src/path.cpp)
+add_executable(simulator src/main.cpp src/car_model.cpp src/dynamic_tree.cpp)
  
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
