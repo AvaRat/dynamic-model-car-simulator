@@ -11,7 +11,7 @@ Model::Model()
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
-	tau = 0;
+	tau = 0.01;
 	r = 1;
 	h = 1;
 	b = 1;
@@ -77,7 +77,7 @@ void Model::command(double torque , double steering_angle)
     */
 		//przeliczenie zadanego momentu na sile wzdluzna kola
 		long_for_f = torque / r;
-		long_for_r = long_for_r; //zakladam rowne rozlozenie momentu na os przod/tyl
+		long_for_r = long_for_f; //zakladam rowne rozlozenie momentu na os przod/tyl
 
 		slip_angle_f = steering_angle - ((a * yaw_rate + long_vel) / lat_vel);
 		slip_angle_r = (b * yaw_rate - long_vel) / lat_vel;
