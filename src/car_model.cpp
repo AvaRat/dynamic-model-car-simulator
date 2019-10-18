@@ -1,5 +1,7 @@
 #include"../include/simulator/car_model.h"
 
+// test gita!xxxxxxxxxxxxxxxxxxxxxx
+
 Model::Model()
 {
 	//zmienne stanu dla t = 0
