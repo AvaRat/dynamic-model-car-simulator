@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     //simulator stuff
     Path path;
     path.read_from_file("/home/marcel/Documents/Article_RTOS_2020/dynamic-model-car-simulator/symulator.txt");
-    auto closests = path.get_n_closest(0.87, 6.3001, 3);
+    //auto closests = path.get_n_closest(0.87, 6.3001, 3);
     Model model;
     Dynamic_tree tree(&model, &path);
     tree.create_children({10.0,-5.0}, {0.78539, -0.78539});
