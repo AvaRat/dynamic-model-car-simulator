@@ -2,14 +2,31 @@
 #include<cassert>
 #include"../includes/dynamic_tree.h"
 
+using array_type = vector<Node*>;
 
-Dynamic_tree::Dynamic_tree(Model model, Path path): dynamic_model(model), path(path), grand_parent(0, 0)
+Dynamic_tree::Dynamic_tree(Model *model, Path *path): dynamic_model(model), path(path), grand_parent(0, 0)
 {
 }
 
 void Dynamic_tree::DFS(Node *node)
 {
+    update_model(node->get_cmd());
+    if(! check_position())
+        return;
+    else
+    {
+        array_type children = node->get_children();
+        for(auto it=children.begin(); it!=children.end(); it++)
+        {
+            DFS(*it);
+        }
+    }
+    
+}
 
+void Dynamic_tree::update_model(Command cmd)
+{
+    dynamic_model->command(cmd.momentum, cmd.steering_angle);
 }
 
 void Dynamic_tree::create_children(pair<double,double> momentum_max_min, pair<double, double> angle_max_min)
@@ -23,6 +40,28 @@ Node::Node(double momentum, double steering_angle)
     children.reserve(n_children);
     command.momentum = momentum;
     command.steering_angle = steering_angle;
+}
+
+
+
+Command Node::get_cmd()
+{
+    return command;
+}
+
+array_type Node::get_children()
+{
+    return children;
+}
+
+array_type::iterator Node::get_active_child()
+{
+    return active_child;
+}
+
+array_type::iterator Node::get_neighbour()
+{
+    return neighbour;
 }
 
 /**

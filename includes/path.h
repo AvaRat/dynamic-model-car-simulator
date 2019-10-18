@@ -4,6 +4,7 @@
 #include<utility>
 #include<cassert>
 #include<cmath>
+#include<algorithm>
 
 using namespace std;
 typedef vector<pair<double, double>> points;
@@ -11,6 +12,7 @@ typedef vector<pair<double, double>> points;
 class Path {
     private:
     points pathpoints;
+    const size_t points_horizon = 2;
 
     public:
     Path() {}
@@ -29,8 +31,27 @@ class Path {
         f.close();
     }
 
-    points get_closest(double x_pos, double y_pos)
+    points get_n_closest(double x_pos, double y_pos, size_t n_points=2)
     {
+        assert(pathpoints.size() > 0);
+        vector<double> distances;
+        size_t i=0;
+        for(auto it=pathpoints.begin(); it!=pathpoints.end(); it++, i++)
+        {
+            // sqrt((x-x0)^2 + (y-y0)^2)
+            distances.push_back(sqrt(pow((*it).first - x_pos, 2) + pow((*it).second - y_pos, 2)));
+        }
+        auto min_iterator = min_element(distances.begin(), distances.end());
+        size_t nth_elem = distance(distances.begin(), min_iterator);
+        points closests;
+        for(size_t i=0; i<n_points; i++, nth_elem++)
+            {
+                if(nth_elem == pathpoints.size())
+                    nth_elem = 0;
+                closests.push_back(pathpoints[nth_elem]);
+            }
+        assert(closests.size() == n_points);
+        return closests;
         //TODO get closest n points on our path
     }
 
@@ -47,7 +68,7 @@ class Path {
     {
         double x1, y1, x2, y2, path_yaw, angular_offset, linear_offset;
         vector<double> coefficients = {};
-        points closest_points = get_closest(x_pos, y_pos);
+        points closest_points = get_n_closest(x_pos, y_pos);
 
         assert(closest_points.size() >= 2);
 
