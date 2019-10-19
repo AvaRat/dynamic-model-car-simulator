@@ -43,10 +43,12 @@ class Model {
 
 
 
+
     public:
     Model(double tau);
     void publish_pose(ros::Publisher *pub);
     void command(double torque, double steering_angle);
     std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
     std::map<std::string, double> get_data();
+     int wrong_slip = 0;
 };

@@ -84,6 +84,7 @@ void Model::command(double torque , double steering_angle)
 		{
             slip_angle_f = 0;
 		    slip_angle_r = 0;
+            wrong_slip++;
         }else
         {
             slip_angle_f = steering_angle - ((a * yaw_rate + long_vel) / lat_vel);

@@ -73,11 +73,13 @@ int main(int argc, char **argv)
         {
           count = 0;
           model.publish_pose(&pose_pub);
-          r.sleep();
+        //  r.sleep();
         }
     
     }
     f.close();
-    cout << "closing_file\n";
+//     cout << "closing_file\n";
+     cout << model.wrong_slip << endl;
+
     return 0;
 }
