@@ -80,14 +80,14 @@ void Model::command(double torque , double steering_angle)
 		long_for_f = torque / r;
 		long_for_r = long_for_f; //zakladam rowne rozlozenie momentu na os przod/tyl
 
-        if(abs(lat_vel) < 1e-16)
+        if(abs(long_vel) < 1e-16)
 		{
-            slip_angle_f = 0;
+        slip_angle_f = 0;
 		    slip_angle_r = 0;
         }else
         {
-            slip_angle_f = steering_angle - ((a * yaw_rate + long_vel) / lat_vel);
-		    slip_angle_r = (b * yaw_rate - long_vel) / lat_vel;
+        slip_angle_f = steering_angle - ((a * yaw_rate + lat_vel) / long_vel);
+		    slip_angle_r = (b * yaw_rate - lat_vel) / long_vel;
         }
 
 
