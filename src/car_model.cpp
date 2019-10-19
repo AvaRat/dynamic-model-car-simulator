@@ -107,7 +107,7 @@ void Model::command(double torque , double steering_angle)
 
 		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
 
-		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_pos * cos(yaw_angle))) * tau); //x5
+		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x5
 
 		yaw_angle = yaw_angle + (yaw_angle * tau); //x6
 
@@ -123,7 +123,18 @@ std::vector<double> Model::get_position()
 std::map<std::string, double> Model::get_data()
 {
     std::map<std::string, double> data;
+    data["x"] = long_pos;
+    data["y"] = lat_pos;
     data["lat_vel"] = lat_vel;
+    data["long_vel"] = long_vel;
+    data["yaw_angle"] = yaw_angle;
+    data["yaw_rate"] = yaw_rate;
+    data["slip_angle_f"] = slip_angle_f;
+    data["norm_load_f"] = norm_load_f;
+    data["norm_load_r"] = norm_load_r;
+    data["slip_angle_est_f"] = slip_angle_est_f;
+    data["slip_angle_est_r"] = slip_angle_est_r;
+    return data;
 }
 
 void Model::publish_pose(ros::Publisher *pub)

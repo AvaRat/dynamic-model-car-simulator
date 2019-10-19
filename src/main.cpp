@@ -29,16 +29,21 @@ int main(int argc, char **argv)
 
   //  cmd.push_back(torque);
 
-    f << "x" << "," << "y" << "," << "yaw" << "," << "t" << "," <<  "torque" << endl;
+    f << "x" << "," << "y" << "," << "t" << "," <<  "torque" << "," << "long_vel" \
+        << "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
+        << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r" << endl;
     for(size_t n=0; n< n_cmd; n++)
     {   
-        if(n >= n_cmd/2)
-            torque = -torque;
+       
         cmd.push_back(torque);
-        model.command(cmd[n], 0);
-        auto vec = model.get_position();
-        f << vec[0] << "," << vec[1] << "," << vec[2] << "," << dT*n << "," << cmd[n] << endl;
+        auto data = model.get_data();
+        f << data["x"]<<","<<data["y"]<<","<<n*dT<<"," << cmd[n]<<","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
+        f << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," ;
+        f << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
+        f << data["slip_angle_est_r"]<<endl;
+
         model.publish_pose(&pose_pub);
+        model.command(cmd[n], 0);
       //  r.sleep();
     }
     f.close();
