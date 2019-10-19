@@ -11,17 +11,16 @@ Model::Model(double Dt)
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
-    tau = Dt;
-	r = 1;
-	h = 1;
-	b = 1;
-	a = 1;
-	mass = 10;
-	i = 1;
-	h = 0,05;
-	g = 9,8123;
-	u = 1;
-	cf = cr = 1;
+  tau = Dt;
+	r = 0.3;
+	b = 2;
+	a = 2;
+	mass = 1292;
+	i = 2380;
+	h = 0.3;
+	g = 9.8123;
+	u = 0.7;
+	cf = cr = 5000;
 
 
  //   visualization_msgs::Marker marker;
@@ -88,7 +87,7 @@ void Model::command(double torque , double steering_angle)
             slip_angle_f = steering_angle - ((a * yaw_rate + long_vel) / lat_vel);
 		    slip_angle_r = (b * yaw_rate - long_vel) / lat_vel;
         }
-        
+
 
 
 		norm_load_f = (mass * g * b - ((long_for_f + long_for_r) * h)) / (a + b);
