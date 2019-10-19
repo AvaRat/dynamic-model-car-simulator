@@ -22,6 +22,8 @@ Model::Model(double Dt)
 	u = 0.7;
 	cf = cr = 5000;
 
+	max_torque = r * (u * ((mass*g*b/(a+b)) / (1 + (u * h / (a+b)))));
+
 
  //   visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
