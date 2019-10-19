@@ -37,10 +37,10 @@ class Model {
   	double norm_load_r; //normal tire load on rear tires
   	double slip_angle_est_f; //slip angle of front tires (estimation)
   	double slip_angle_est_r; //slip angle of front tires (estimation)
+    double max_torque; 
 
 
 
-      
 
 
     public:
@@ -50,4 +50,3 @@ class Model {
     std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
     std::map<std::string, double> get_data();
 };
-
