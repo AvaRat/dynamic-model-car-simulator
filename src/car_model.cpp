@@ -79,7 +79,7 @@ void Model::command(double torque , double steering_angle)
 		long_for_f = torque / r;
 		long_for_r = long_for_f; //zakladam rowne rozlozenie momentu na os przod/tyl
 
-        if(abs(lat_vel) < 1e-10)
+        if(abs(lat_vel) < 1e-16)
 		{
             slip_angle_f = 0;
 		    slip_angle_r = 0;
@@ -107,9 +107,9 @@ void Model::command(double torque , double steering_angle)
 
 		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
 
-		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x5
+		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * tau); //x5
 
-		yaw_angle = yaw_angle + (yaw_angle * tau); //x6
+		yaw_angle = yaw_angle + (yaw_rate * tau); //x6
 
 
  //   std::cout << "car state changed\n";
