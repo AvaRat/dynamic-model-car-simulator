@@ -132,6 +132,7 @@ std::map<std::string, double> Model::get_data()
     data["yaw_angle"] = yaw_angle;
     data["yaw_rate"] = yaw_rate;
     data["slip_angle_f"] = slip_angle_f;
+    data["slip_angle_r"] = slip_angle_r;
     data["norm_load_f"] = norm_load_f;
     data["norm_load_r"] = norm_load_r;
     data["slip_angle_est_f"] = slip_angle_est_f;
