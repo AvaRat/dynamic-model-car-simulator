@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
     f << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_vel" \
         << "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
-        << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r" << endl;
+        << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r," <<"lat_for_f, " << "lat_for_r" << endl;
 
     int count = 0;
     for(size_t n=0; n< n_cmd; n++)
@@ -63,9 +63,9 @@ int main(int argc, char **argv)
         angle.push_back(steering_angle);
         auto data = model.get_data();
         f << data["x"]<<","<<data["y"]<<","<<n*dT<<"," << cmd_vel[n]<<"," <<angle[n] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
-        f << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," ;
+        f << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
         f << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
-        f << data["slip_angle_est_r"]<<endl;
+        f << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << endl;
 
        // model.publish_pose(&pose_pub);
         model.command(cmd_vel[n], angle[n]);

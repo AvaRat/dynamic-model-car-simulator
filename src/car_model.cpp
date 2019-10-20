@@ -136,6 +136,8 @@ std::map<std::string, double> Model::get_data()
     data["norm_load_r"] = norm_load_r;
     data["slip_angle_est_f"] = slip_angle_est_f;
     data["slip_angle_est_r"] = slip_angle_est_r;
+    data["lat_for_f"] = lat_for_f;
+    data["lat_for_r"] = lat_for_r;
     return data;
 }
 
