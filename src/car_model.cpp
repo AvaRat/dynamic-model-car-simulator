@@ -80,14 +80,14 @@ void Model::command(double torque , double steering_angle)
 		long_for_f = torque / r;
 		long_for_r = long_for_f; //zakladam rowne rozlozenie momentu na os przod/tyl
 
-        if(abs(long_vel) < 1e-16)
+        if(fabs(long_vel) < 0.0001)
 		{
-        slip_angle_f = 0;
+            slip_angle_f = 0;
 		    slip_angle_r = 0;
             wrong_slip++;
         }else
         {
-        slip_angle_f = steering_angle - ((a * yaw_rate + lat_vel) / long_vel);
+            slip_angle_f = steering_angle - ((a * yaw_rate + lat_vel) / long_vel);
 		    slip_angle_r = (b * yaw_rate - lat_vel) / long_vel;
         }
 
@@ -97,8 +97,8 @@ void Model::command(double torque , double steering_angle)
 		norm_load_r = (mass * g * a + ((long_for_f + long_for_r) * h)) / (a + b);
 		slip_angle_est_f = cf * slip_angle_f / (u * norm_load_f);
 		slip_angle_est_r = cr * slip_angle_r / (u * norm_load_r);
-		lat_for_f = u * norm_load_f * (slip_angle_est_f - (slip_angle_est_f * abs(slip_angle_est_f) / 3) + (pow(slip_angle_est_f, 3) / 27)) * sqrt(1 - pow(long_for_f / (u * norm_load_f), 2) + pow(long_for_f / cf, 2));
-		lat_for_r = u * norm_load_r * (slip_angle_est_r - (slip_angle_est_r * abs(slip_angle_est_r) / 3) + (pow(slip_angle_est_r, 3) / 27)) * sqrt(1 - pow(long_for_r / (u * norm_load_r), 2) + pow(long_for_r / cr, 2));
+		lat_for_f = u * norm_load_f * (slip_angle_est_f - (slip_angle_est_f * fabs(slip_angle_est_f) / 3) + (pow(slip_angle_est_f, 3) / 27)) * sqrt(1 - pow(long_for_f / (u * norm_load_f), 2) + pow(long_for_f / cf, 2));
+		lat_for_r = u * norm_load_r * (slip_angle_est_r - (slip_angle_est_r * fabs(slip_angle_est_r) / 3) + (pow(slip_angle_est_r, 3) / 27)) * sqrt(1 - pow(long_for_r / (u * norm_load_r), 2) + pow(long_for_r / cr, 2));
 
 		//obliczenie zmiennych stanu x1, x2...
 		yaw_rate = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * tau); //x1

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     {   
        
         cmd_vel.push_back(0);
-        if(abs(steering_angle_2-steering_tmp) > 1e-10)
+        if(fabs(steering_angle_2-steering_tmp) > 1e-10)
         {
             steering_tmp += steering_increment;
             angle_vec.push_back(steering_tmp);
