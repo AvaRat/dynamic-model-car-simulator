@@ -1,5 +1,7 @@
 dT 0.01
-n_cmd 10000
-torque 500
-torque_n_cmd 500
-steering_angle 0.78
+n_cmd 5000
+torque 50
+torque_change 20
+steering_change 20
+steering_angle_1 0.0
+steering_angle_2 0.57
