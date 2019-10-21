@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     fstream param_file;
     param_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/params.txt", fstream::in);
     if(param_file.is_open())
-        cout << "is_open\n";
+        cout << "file opening... OK\n";
     string param_name;
     double value;
     while(param_file >> param_name)
@@ -70,13 +70,13 @@ int main(int argc, char **argv)
         << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r," <<"lat_for_f, " << "lat_for_r" << endl;
     steering_tmp = steering_angle_1;
     int count = 0;
-
+    cout << steering_change_2 << endl;
     //main loop
     for(size_t n=0; n< n_cmd; n++)
     {   
        
         cmd_vel.push_back(0);
-        if(n > steering_change_2)
+        if(n > steering_change_2 - steering_change_1)
             angle_vec.push_back(steering_angle_3);
         else
         {

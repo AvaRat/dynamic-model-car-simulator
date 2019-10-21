@@ -1,9 +1,9 @@
 dT 0.01
-n_cmd 50000
+n_cmd 10000
 torque 10
 torque_change 2000
 steering_change_1 2000
-steering_change_2 9000
+steering_change_2 4000
 steering_angle_1 0.0
 steering_angle_2 0.87
 steering_angle_3 0.0
