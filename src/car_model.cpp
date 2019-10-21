@@ -40,7 +40,6 @@ Model::Model(double Dt)
 
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = visualization_msgs::Marker::ADD;
-
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
     marker.pose.position.x = 0;
     marker.pose.position.y = 0;
@@ -61,11 +60,13 @@ Model::Model(double Dt)
     marker.color.b = 0.0f;
     marker.color.a = 1.0;
 
-    marker.lifetime = ros::Duration();
+    marker.lifetime = ros::Duration(5);
 }
 
 void Model::command(double torque , double steering_angle)
 {
+    last_torque = torque;
+    last_angle = steering_angle;
     /*
     std::cout << "command called\n give new coordinates";
     std::cout << "\nx_pos: \t";
@@ -139,6 +140,8 @@ std::map<std::string, double> Model::get_data()
     data["slip_angle_est_r"] = slip_angle_est_r;
     data["lat_for_f"] = lat_for_f;
     data["lat_for_r"] = lat_for_r;
+    data["steering_angle"] = last_angle;
+    data["torque"] = last_torque;
     return data;
 }
 
