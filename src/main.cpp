@@ -61,12 +61,13 @@ int main(int argc, char **argv)
     ros::Rate r(50);
     ros::Publisher pose_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
     double cmd_change_duration= 1;  //seconds
-    size_t change_n_cmd = cmd_change_duration/dT;
+    size_t change_n_cmd = 0;
     vector<Cmd> commands;
     fstream param_file;
     param_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/params.txt");
     cout << "opening params.txt ...";
     commands = read_file(param_file);
+    change_n_cmd = cmd_change_duration/dT;
     if(param_file.is_open())
         cout << "OK\n";
     else 
