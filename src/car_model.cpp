@@ -114,7 +114,7 @@ void Model::command(double torque , double steering_angle)
 
 		yaw_angle = yaw_angle + (yaw_rate * tau); //x6
 
-
+        time+=tau;
  //   std::cout << "car state changed\n";
 }
 
@@ -127,7 +127,8 @@ std::map<std::string, double> Model::get_data()
 {
     std::map<std::string, double> data;
     data["x"] = long_pos;
-    data["y"] = lat_pos;
+    data["y"] = lat_pos;\
+    data["t"] = time;
     data["lat_vel"] = lat_vel;
     data["long_vel"] = long_vel;
     data["yaw_angle"] = yaw_angle;

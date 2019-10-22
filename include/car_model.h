@@ -39,6 +39,7 @@ class Model {
   	double slip_angle_est_r; //slip angle of front tires (estimation)
     double max_torque; 
 
+    double time = 0;
     double last_torque = 0;
     double last_angle = 0;
 
