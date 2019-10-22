@@ -37,12 +37,18 @@ class Model {
   	double norm_load_r; //normal tire load on rear tires
   	double slip_angle_est_f; //slip angle of front tires (estimation)
   	double slip_angle_est_r; //slip angle of front tires (estimation)
-    double max_torque; 
+    double max_torque;
 
     double time = 0;
     double last_torque = 0;
     double last_angle = 0;
 
+    double yaw_rate_dot;
+    double lat_vel_dot;
+    double long_vel_dot;
+    double long_pos_dot;
+    double lat_pos_dot;
+    double yaw_angle_dot;
 
 
 

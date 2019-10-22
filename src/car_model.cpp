@@ -102,17 +102,30 @@ void Model::command(double torque , double steering_angle)
 		lat_for_r = u * norm_load_r * (slip_angle_est_r - (slip_angle_est_r * fabs(slip_angle_est_r) / 3) + (pow(slip_angle_est_r, 3) / 27)) * sqrt(1 - pow(long_for_r / (u * norm_load_r), 2) + pow(long_for_r / cr, 2));
 
 		//obliczenie zmiennych stanu x1, x2...
-		yaw_rate = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * tau); //x1
+		yaw_rate_dot = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * tau); //x1
 
-		lat_vel = lat_vel + (((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate)) * tau); //x2
+		lat_vel_dot = lat_vel + (((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate)) * tau); //x2
 
-		long_vel = long_vel + ((((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate)) * tau); //x3
+		long_vel_dot = long_vel + ((((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate)) * tau); //x3
 
-		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
+		long_pos_dot = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
 
-		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * tau); //x5
+		lat_pos_dot = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * tau); //x5
 
-		yaw_angle = yaw_angle + (yaw_rate * tau); //x6
+		yaw_angle_dot = yaw_angle + (yaw_rate * tau); //x6
+
+		//go to next state
+		yaw_rate = yaw_rate_dot;
+
+		lat_vel = lat_vel_dot;
+
+		long_vel = long_vel_dot;
+
+		long_pos = long_pos_dot;
+
+		lat_pos = lat_pos_dot;
+
+		yaw_angle = yaw_angle_dot;
 
         time+=tau;
  //   std::cout << "car state changed\n";
