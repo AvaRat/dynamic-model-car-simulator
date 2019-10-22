@@ -123,9 +123,8 @@ std::vector<double> Model::get_position()
     std::vector<double> vec = {long_pos, lat_pos, yaw_angle};
     return vec;
 }
-std::map<std::string, double> Model::get_data()
+void Model::get_data(std::map<std::string, double> &data)
 {
-    std::map<std::string, double> data;
     data["x"] = long_pos;
     data["y"] = lat_pos;\
     data["t"] = time;
@@ -143,7 +142,6 @@ std::map<std::string, double> Model::get_data()
     data["lat_for_r"] = lat_for_r;
     data["steering_angle"] = last_angle;
     data["torque"] = last_torque;
-    return data;
 }
 
 void Model::publish_pose(ros::Publisher *pub)
