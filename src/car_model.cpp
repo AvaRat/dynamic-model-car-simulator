@@ -5,6 +5,7 @@
 Model::Model(double Dt)
 {
 	//zmienne stanu dla t = 0
+    yaw_angle = 0;
 	yaw_rate = 0;
 	lat_vel = 0;
 	long_vel = 0;

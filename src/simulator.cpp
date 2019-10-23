@@ -88,7 +88,7 @@ public:
     pose.pose.position.z = 0;
 
     pose.pose.orientation = to_quaternion(data["yaw_angle"], 0, 0);
-    
+
     pose_pub.publish(pose);
   }
 
