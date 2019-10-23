@@ -43,6 +43,8 @@ class Model {
     double last_torque = 0;
     double last_angle = 0;
 
+    double distance_on_track = 0;
+    double error = 0;
 
 
 
@@ -53,5 +55,7 @@ class Model {
     void command(double torque, double steering_angle);
     std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
     void get_data(std::map<std::string, double> &data);
+    void set_distance_on_track(double distance_on_track);
+    void set_error(double err);
      int wrong_slip = 0;
 };

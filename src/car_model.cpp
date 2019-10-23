@@ -12,7 +12,7 @@ Model::Model(double Dt)
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
-  tau = Dt;
+    tau = Dt;
 	r = 0.3;
 	b = 2;
 	a = 2;
@@ -127,7 +127,7 @@ std::vector<double> Model::get_position()
 void Model::get_data(std::map<std::string, double> &data)
 {
     data["x"] = long_pos;
-    data["y"] = lat_pos;\
+    data["y"] = lat_pos;
     data["t"] = time;
     data["lat_vel"] = lat_vel;
     data["long_vel"] = long_vel;
@@ -143,6 +143,8 @@ void Model::get_data(std::map<std::string, double> &data)
     data["lat_for_r"] = lat_for_r;
     data["steering_angle"] = last_angle;
     data["torque"] = last_torque;
+    data["distance_on_track"] = distance_on_track;
+    data["error"] = error;
 }
 
 void Model::publish_pose(ros::Publisher *pub)
@@ -168,4 +170,14 @@ void Model::publish_pose(ros::Publisher *pub)
     marker.pose.orientation.w = w;
 
     pub->publish(marker);
+}
+
+void Model::set_distance_on_track(double new_distance)
+{
+    distance_on_track = new_distance;
+}
+
+void Model::set_error(double err)
+{
+    error = err;
 }

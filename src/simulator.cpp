@@ -8,6 +8,7 @@
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Pose2D.h>
+#include<nav_msgs/Path.h>
 #include "std_msgs/Float64.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float64MultiArray.h"
@@ -41,7 +42,8 @@ public:
     {
         data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_vel" \
         << "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
-        << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r," <<"lat_for_f, " << "lat_for_r" << endl;
+        << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r,"\
+        <<"lat_for_f, " << "lat_for_r," <<"distance_on_track," << "error" << endl;
         ROS_INFO("OK\n");
     }else 
     {
@@ -76,8 +78,21 @@ public:
     file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] <<"," << data["steering_angle"] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
     file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
     file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
-    file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << endl;
+    file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << ",";
+    file << data["distance_on_track"] << "," << data["error"] << endl;
   }
+
+  void distance_callback(const std_msgs::Float64 msg)
+  {
+    model.set_distance_on_track(msg.data);
+  }
+
+  void error_callback(const std_msgs::Float64 msg)
+  {
+    cout << "actual error = " << msg.data << endl;
+    model.set_error(msg.data);
+  }
+
   void publish_pose(map<string, double> data)
   {
     geometry_msgs::PoseStamped pose;
