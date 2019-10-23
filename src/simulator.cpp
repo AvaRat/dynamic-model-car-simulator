@@ -89,7 +89,6 @@ public:
 
   void error_callback(const std_msgs::Float64 msg)
   {
-    cout << "actual error = " << msg.data << endl;
     model.set_error(msg.data);
   }
 
