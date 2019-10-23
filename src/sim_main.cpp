@@ -13,7 +13,7 @@ int main(int argc, char **argv)
   double dT = 0;
   ros::init(argc, argv, "simulator");
   ros::NodeHandle n;
-  ros::Rate r(10);
+  ros::Rate r(1);
   n.param("dT", dT, 0.01);
   ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("pose", 1);
   ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("speed", 1);
@@ -25,7 +25,14 @@ int main(int argc, char **argv)
   simulator.set_cmd_subscriber(cmd_sub);
 
   ROS_INFO("started simulation with dT = %lf", dT);
-  ros::spin();
+  char ch;
+
+  while(ros::ok())
+  {
+    simulator.update_pose();
+    ros::spinOnce();
+    r.sleep();
+  }
 
 
   return 0;    

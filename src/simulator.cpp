@@ -55,14 +55,12 @@ public:
   {
     //ROS_INFO("cmd");
     model.command(msg.data[1], msg.data[0]);
+
     std::map<std::string, double> data;
+
     model.get_data(data);
     parse_data(data_file, data);
-    transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
-    tf::Quaternion q;
-    q.setRPY(0, 0, data["yaw_angle"]);
-    transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
+
     std_msgs::Float64 speed_msg;
     double abs_speed = (sqrt(pow(data["long_vel"],2) + pow(data["lat_vel"], 2)));
     if(data["long_vel"] > 0)
@@ -71,6 +69,8 @@ public:
       speed_msg.data = -abs_speed;
     publish_pose(data);
     speed_pub.publish(speed_msg);
+
+    update_pose();
   }
 
   void parse_data(fstream &file, std::map<std::string, double> data)
@@ -90,6 +90,18 @@ public:
   void error_callback(const std_msgs::Float64 msg)
   {
     model.set_error(msg.data);
+  }
+
+  void update_pose()
+  {
+    std::map<string, double> data;
+    model.get_data(data);
+    transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
+    tf::Quaternion q;
+    q.setRPY(0, 0, data["yaw_angle"]);
+    transform.setRotation(q);
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
+    publish_pose(data);
   }
 
   void publish_pose(map<string, double> data)
