@@ -1,16 +1,30 @@
 #include"simulator.cpp"
 
 
+void test_callback(const std_msgs::Float32 msg)
+{
+  cout << "command received\n";
+}
+
 using namespace std;
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "simulator");
-    ros::NodeHandle n;
-    ros::Rate r(50);
-    
-    Simulator simulator(n, 0.01); 
+  
+  double dT = 0;
+  ros::init(argc, argv, "simulator");
+  ros::NodeHandle n;
+  ros::Rate r(10);
+  n.param("dT", dT, 0.01);
+  ros::Publisher pose_pub = n.advertise<geometry_msgs::Pose>("pose", 1);
+  ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("speed", 1);
+  Simulator simulator(pose_pub, speed_pub, dT);
+  ros::Subscriber cmd_sub = n.subscribe("model_control", 1000, &Simulator::cmd_callback, &simulator);
+  simulator.set_cmd_subscriber(cmd_sub);
 
+  ROS_INFO("started simulation with dT = %lf", dT);
+  ros::spin();
 
 
   return 0;    
 }
+

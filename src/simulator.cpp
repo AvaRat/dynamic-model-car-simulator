@@ -16,10 +16,9 @@ using namespace std;
 
 class Simulator {
 private:
-  ros::Subscriber cmd_pub;
+  ros::Subscriber cmd_sub;
   ros::Publisher pose_pub;
   ros::Publisher speed_pub;
-  ros::NodeHandle nh;
   tf::TransformBroadcaster br;
   tf::StampedTransform transform;
   Model model;
@@ -28,26 +27,31 @@ private:
 
 public:
   Simulator():model(0) {}
-  Simulator(const ros::NodeHandle &n, double dT): nh(n), model(dT)
+  ~Simulator()
   {
-    ros::Publisher pose_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-    ros::Publisher speed_pub = nh.advertise<std_msgs::Float64>("speed", 1);
-    ros::Subscriber cmd_sub = nh.subscribe("model_control", 1000, &Simulator::cmd_callback, this);
-    data_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+    data_file.close();
+    cout << "closing data file in destructor\n";
+  }
+  Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double dT)
+  :model(dT), pose_pub(pose_pub), speed_pub(speed_pub)
+  {
+    ROS_INFO("opening data file...  ");
+    data_file.open("/home/marcel/Documents/Article_RTOS_2020/ros_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
     if(data_file.is_open())
     {
-        cout << "OK\n";
         data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_vel" \
         << "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
         << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r," <<"lat_for_f, " << "lat_for_r" << endl;
+        ROS_INFO("OK\n");
     }else 
     {
-      cout << "FAILED\n";
+      ROS_INFO("FAILED");
     }
   }
 
   void cmd_callback(const std_msgs::Float64MultiArray &msg)
   {
+    //ROS_INFO("cmd");
     model.command(msg.data[1], msg.data[0]);
     std::map<std::string, double> data;
     model.get_data(data);
@@ -73,6 +77,16 @@ public:
     file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
     file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
     file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << endl;
+  }
+  void publish_pose()
+  {
+    geometry_msgs::Pose pose;
+   // pose.orientation.
+  }
+
+  void set_cmd_subscriber(ros::Subscriber &sub)
+  {
+    cmd_sub = sub;
   }
 };
 

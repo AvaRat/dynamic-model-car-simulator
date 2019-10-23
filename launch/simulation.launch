@@ -1,0 +1,14 @@
+<launch>
+    <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen"/>
+    
+    <node pkg="skidpad_planner" type="skidpad_planner" name="skidpad_planner">
+        <param name="~/skipad/R" type="double" value="5.0"/>
+        <param name="~/skipad/a" type="double" value="5.0"/>
+        <param name="~/skipad/b" type="double" value="5.0"/>
+        <param name="~/path/start" type="double" value="-1.0"/>
+        <param name="~/path/stop" type="double" value="2.5"/>
+        <param name="~/path/step" type="double" value="0.25"/>
+    </node>
+
+
+</launch>
