@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
   ros::Rate r(10);
   n.param("dT", dT, 0.01);
-  ros::Publisher pose_pub = n.advertise<geometry_msgs::Pose>("pose", 1);
+  ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("pose", 1);
   ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("speed", 1);
   Simulator simulator(pose_pub, speed_pub, dT);
   ros::Subscriber cmd_sub = n.subscribe("model_control", 1000, &Simulator::cmd_callback, &simulator);

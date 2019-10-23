@@ -67,7 +67,7 @@ public:
       speed_msg.data = abs_speed;
     else
       speed_msg.data = -abs_speed;
-
+    publish_pose(data);
     speed_pub.publish(speed_msg);
   }
 
@@ -78,15 +78,41 @@ public:
     file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
     file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << endl;
   }
-  void publish_pose()
+  void publish_pose(map<string, double> data)
   {
-    geometry_msgs::Pose pose;
-   // pose.orientation.
+    geometry_msgs::PoseStamped pose;
+    pose.header.frame_id = "map";
+    pose.header.stamp = ros::Time::now();
+    pose.pose.position.x = data["x"];
+    pose.pose.position.y = data["y"];
+    pose.pose.position.z = 0;
+
+    pose.pose.orientation = to_quaternion(data["yaw_angle"], 0, 0);
+    
+    pose_pub.publish(pose);
   }
 
   void set_cmd_subscriber(ros::Subscriber &sub)
   {
     cmd_sub = sub;
+  }
+
+  geometry_msgs::Quaternion to_quaternion(double yaw, double pitch, double roll)
+  {
+    geometry_msgs::Quaternion q;
+    double cy = cos(yaw * 0.5);
+    double sy = sin(yaw * 0.5);
+    double cp = cos(pitch * 0.5);
+    double sp = sin(pitch * 0.5);
+    double cr = cos(roll * 0.5);
+    double sr = sin(roll * 0.5);
+
+    q.w = cy * cp * cr + sy * sp * sr;
+    q.x = cy * cp * sr - sy * sp * cr;
+    q.y = sy * cp * sr + cy * sp * cr;
+    q.z = sy * cp * cr - cy * sp * sr;
+
+    return q;
   }
 };
 
