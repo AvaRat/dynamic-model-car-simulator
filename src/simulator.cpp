@@ -61,19 +61,11 @@ public:
     model.get_data(data);
     parse_data(data_file, data);
 
-    std_msgs::Float64 speed_msg;
-    double abs_speed = (sqrt(pow(data["long_vel"],2) + pow(data["lat_vel"], 2)));
-    if(data["long_vel"] > 0)
-      speed_msg.data = abs_speed;
-    else
-      speed_msg.data = -abs_speed;
-    publish_pose(data);
-    speed_pub.publish(speed_msg);
 
     update_pose();
   }
 
-  void parse_data(fstream &file, std::map<std::string, double> data)
+  void parse_data(fstream &file, std::map<std::string, double> &data)
   {
     file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] <<"," << data["steering_angle"] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
     file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
@@ -102,9 +94,22 @@ public:
     transform.setRotation(q);
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
     publish_pose(data);
+    publish_speed(data);
   }
 
-  void publish_pose(map<string, double> data)
+  void publish_speed(std::map<string, double> &data)
+  {
+    std_msgs::Float64 speed_msg;
+    double abs_speed = (sqrt(pow(data["long_vel"],2) + pow(data["lat_vel"], 2)));
+    if(data["long_vel"] > 0)
+      speed_msg.data = abs_speed;
+    else
+      speed_msg.data = -abs_speed;
+    publish_pose(data);
+    speed_pub.publish(speed_msg);
+  }
+
+  void publish_pose(map<string, double> &data)
   {
     geometry_msgs::PoseStamped pose;
     pose.header.frame_id = "map";
@@ -114,7 +119,6 @@ public:
     pose.pose.position.z = 0;
 
     pose.pose.orientation = to_quaternion(data["yaw_angle"], 0, 0);
-
     pose_pub.publish(pose);
   }
 

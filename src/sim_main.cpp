@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 
   ros::Subscriber distance_sub = n.subscribe("s", 1, &Simulator::distance_callback, &simulator);
   ros::Subscriber error_pub = n.subscribe("d", 1, &Simulator::error_callback, &simulator);
-  ros::Subscriber cmd_sub = n.subscribe("model_control", 1000, &Simulator::cmd_callback, &simulator);
+  ros::Subscriber cmd_sub = n.subscribe("model_control", 10, &Simulator::cmd_callback, &simulator);
   simulator.set_cmd_subscriber(cmd_sub);
 
   ROS_INFO("started simulation with dT = %lf", dT);
