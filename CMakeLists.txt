@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   visualization_msgs
   geometry_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -210,3 +211,6 @@ include_directories(
 # add the executable
 add_executable(simulator src/main.cpp src/car_model.cpp src/dynamic_tree.cpp)
 target_link_libraries(simulator ${catkin_LIBRARIES})
+
+add_executable(ros_simulator src/sim_main.cpp src/car_model.cpp)
+target_link_libraries(ros_simulator ${catkin_LIBRARIES})
