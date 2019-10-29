@@ -112,6 +112,7 @@ void Model::command(double torque , double steering_angle)
 		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
 
 		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * tau); //x5
+		yaw_angle = yaw_angle + (yaw_angle * tau); //x6
 
 		yaw_angle = yaw_angle + (yaw_rate * tau); //x6
 
