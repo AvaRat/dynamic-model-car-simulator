@@ -1,16 +1,22 @@
 <launch>
-    <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen"/>
-    
-    <node pkg="skidpad_planner" type="skidpad_planner" name="skidpad_planner">
+    <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen" />
+
+    <!--node pkg="skidpad_planner" type="skidpad_planner" name="skidpad_planner">
         <param name="~/skipad/R" type="double" value="5.0"/>
         <param name="~/skipad/a" type="double" value="5.0"/>
         <param name="~/skipad/b" type="double" value="5.0"/>
         <param name="~/path/start" type="double" value="-1.0"/>
         <param name="~/path/stop" type="double" value="2.5"/>
         <param name="~/path/step" type="double" value="0.25"/>
+    </node -->
+
+    <node pkg="model_cmd_converter" type="model_cmd_converter" name="model_cmd_converter" output="screen">
+      <param name="KP" type="double" value="1500.0" />
+      <param name="KI" type="double" value="0.0" />
+      <param name="KD" type="double" value="0.0" />
     </node>
 
-<node pkg="mpc" type="mpc" name="mpc" output="screen">
+<!-- <node pkg="mpc" type="mpc" name="mpc" output="screen">
     <param name="prediction_horizon" type="int" value="10" />
     <param name="delta_time" type="double" value="0.05" />
     <param name="loop_rate" type="int" value="10" />
@@ -25,8 +31,8 @@
     <param name="a_weight" type="int" value="100" />
     <param name="diff_delta_weight" type="int" value="100" />
     <param name="diff_F_weight" type="int" value="10" />
-	<param name="vehicle_mass" type="double" value="1300" />
-	<param name="tyre_radius" type="double" value="0.3" />
-  </node>
+    <param name="vehicle_mass" type="double" value="1300" />
+    <param name="tyre_radius" type="double" value="0.3" />
+  </node> -->
 
 </launch>
