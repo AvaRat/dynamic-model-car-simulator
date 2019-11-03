@@ -66,6 +66,7 @@ Model::Model(double Dt)
 
 void Model::command(double torque , double steering_angle)
 {
+    if(torque > max_torque) torque = max_torque;
     last_torque = torque;
     last_angle = steering_angle;
     /*
