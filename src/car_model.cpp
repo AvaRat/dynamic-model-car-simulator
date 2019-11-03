@@ -5,14 +5,14 @@
 Model::Model(double Dt)
 {
 	//zmienne stanu dla t = 0
-    yaw_angle = 0;
+  yaw_angle = 0;
 	yaw_rate = 0;
 	lat_vel = 0;
-	long_vel = 0;
+	long_vel = 2;
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
-    tau = Dt;
+  tau = Dt;
 	r = 0.3;
 	b = 2;
 	a = 2;

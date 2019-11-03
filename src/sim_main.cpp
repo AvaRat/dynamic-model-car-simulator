@@ -9,11 +9,11 @@ void test_callback(const std_msgs::Float32 msg)
 using namespace std;
 int main(int argc, char **argv)
 {
-  
+
   double dT = 0;
   ros::init(argc, argv, "simulator");
   ros::NodeHandle n;
-  ros::Rate r(1);
+  ros::Rate r(100);
   n.param("dT", dT, 0.01);
   ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("pose", 1);
   ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("speed", 1);
@@ -30,11 +30,11 @@ int main(int argc, char **argv)
   while(ros::ok())
   {
     simulator.update_pose();
+    //ROS_INFO("%lf", ros::Time::now().toSec());
     ros::spinOnce();
     r.sleep();
   }
 
 
-  return 0;    
+  return 0;
 }
-

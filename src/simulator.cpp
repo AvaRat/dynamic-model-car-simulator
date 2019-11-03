@@ -8,7 +8,7 @@
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Pose2D.h>
-#include<nav_msgs/Path.h>
+#include <nav_msgs/Path.h>
 #include "std_msgs/Float64.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float64MultiArray.h"
@@ -24,7 +24,7 @@ private:
   tf::StampedTransform transform;
   Model model;
   fstream data_file;
-  
+
 
 public:
   Simulator():model(0) {}
@@ -45,7 +45,7 @@ public:
         << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r,"\
         <<"lat_for_f, " << "lat_for_r," <<"distance_on_track," << "error" << endl;
         ROS_INFO("OK\n");
-    }else 
+    }else
     {
       ROS_INFO("FAILED");
     }
@@ -53,12 +53,14 @@ public:
 
   void cmd_callback(const std_msgs::Float64MultiArray &msg)
   {
-    //ROS_INFO("cmd");
+    //ROS_INFO("torque: %lf", msg.data[1]);
     model.command(msg.data[1], msg.data[0]);
 
     std::map<std::string, double> data;
 
     model.get_data(data);
+
+    ROS_INFO("speed: %lf", data["long_vel"]);
     parse_data(data_file, data);
 
 
@@ -86,6 +88,7 @@ public:
 
   void update_pose()
   {
+    model.command(model.last_torque, model.last_angle);
     std::map<string, double> data;
     model.get_data(data);
     transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
@@ -145,4 +148,3 @@ public:
     return q;
   }
 };
-

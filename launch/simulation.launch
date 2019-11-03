@@ -10,11 +10,11 @@
         <param name="~/path/step" type="double" value="0.25"/>
     </node -->
 
-    <node pkg="model_cmd_converter" type="model_cmd_converter" name="model_cmd_converter" output="screen">
+    <!--node pkg="model_cmd_converter" type="model_cmd_converter" name="model_cmd_converter" output="screen">
       <param name="KP" type="double" value="1500.0" />
       <param name="KI" type="double" value="0.0" />
       <param name="KD" type="double" value="0.0" />
-    </node>
+    </node-->
 
 <!-- <node pkg="mpc" type="mpc" name="mpc" output="screen">
     <param name="prediction_horizon" type="int" value="10" />

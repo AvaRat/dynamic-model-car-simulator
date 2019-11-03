@@ -8,7 +8,7 @@
 
 
 class Model {
-    private:
+private:
     visualization_msgs::Marker marker;
     double long_pos;    //longitudinal position
     double lat_pos;     //lateral position
@@ -37,19 +37,21 @@ class Model {
   	double norm_load_r; //normal tire load on rear tires
   	double slip_angle_est_f; //slip angle of front tires (estimation)
   	double slip_angle_est_r; //slip angle of front tires (estimation)
-    double max_torque; 
+    double max_torque;
 
     double time = 0;
-    double last_torque = 0;
-    double last_angle = 0;
 
     double distance_on_track = 0;
     double error = 0;
 
 
 
+public:
 
-    public:
+    double last_torque = 0;
+    double last_angle = 0;
+
+
     Model(double tau);
     void publish_pose(ros::Publisher *pub);
     void command(double torque, double steering_angle);
@@ -57,5 +59,5 @@ class Model {
     void get_data(std::map<std::string, double> &data);
     void set_distance_on_track(double distance_on_track);
     void set_error(double err);
-     int wrong_slip = 0;
+    int wrong_slip = 0;
 };
