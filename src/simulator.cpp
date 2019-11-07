@@ -22,28 +22,38 @@ private:
   ros::Publisher speed_pub;
   tf::TransformBroadcaster br;
   tf::StampedTransform transform;
+
   Model model;
+  double dT;
+  double actual_time = 0; //seconds
+  double actual_error = 0; //from track in meters
+  double track_progress = 0;
+  double torque = 0;  //last torque command
+  double steering_angle = 0;  //last steering_angle command
+  double max_torque = 0;  //max torque that will be passed to
+
   fstream data_file;
 
 
 public:
-  Simulator():model(0) {}
+  Simulator():model(0, 0) {}  //DO NOT USE default constructor
   ~Simulator()
   {
     data_file.close();
     cout << "closing data file in destructor\n";
   }
-  Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double dT)
-  :model(dT), pose_pub(pose_pub), speed_pub(speed_pub)
+  Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double dT, double initial_speed)
+  :model(dT, initial_speed), dT(dT), pose_pub(pose_pub), speed_pub(speed_pub)
   {
     ROS_INFO("opening data file...  ");
-    data_file.open("/home/marcel/Documents/Article_RTOS_2020/ros_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+    data_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+    max_torque = model.get_max_torque();
     if(data_file.is_open())
     {
         data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_vel" \
         << "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
         << "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r,"\
-        <<"lat_for_f, " << "lat_for_r," <<"distance_on_track," << "error" << endl;
+        <<"lat_for_f, " << "lat_for_r," <<"track_progress," << "error" << endl;
         ROS_INFO("OK\n");
     }else
     {
@@ -53,43 +63,43 @@ public:
 
   void cmd_callback(const std_msgs::Float64MultiArray &msg)
   {
-    //ROS_INFO("torque: %lf", msg.data[1]);
+    ROS_INFO("torque: %lf", msg.data[1]);
+    ROS_INFO("steering_angle: %lf", msg.data[0]);
     model.command(msg.data[1], msg.data[0]);
 
-    std::map<std::string, double> data;
-
-    model.get_data(data);
-
-    ROS_INFO("speed: %lf", data["long_vel"]);
-    parse_data(data_file, data);
-
-
-    update_pose();
+    torque = msg.data[1];
+    steering_angle = msg.data[0];
+    if(torque > max_torque) torque = max_torque;
+    else if(torque < -max_torque) torque = -max_torque;
   }
 
-  void parse_data(fstream &file, std::map<std::string, double> &data)
+  void parse_data(std::map<std::string, double> &data)
   {
-    file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] <<"," << data["steering_angle"] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
-    file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
-    file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
-    file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << ",";
-    file << data["distance_on_track"] << "," << data["error"] << endl;
+    data_file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] <<"," << data["steering_angle"] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
+    data_file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
+    data_file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
+    data_file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << ",";
+    data_file << data["track_progress"] << "," << data["error"] << endl;
   }
 
-  void distance_callback(const std_msgs::Float64 msg)
+  void track_progress_callback(const std_msgs::Float64 msg)
   {
-    model.set_distance_on_track(msg.data);
+    track_progress = msg.data;
   }
 
   void error_callback(const std_msgs::Float64 msg)
   {
-    model.set_error(msg.data);
+    actual_error = msg.data;
   }
 
-  void update_pose()
+  void next_time_step()
   {
-    model.command(model.last_torque, model.last_angle);
     std::map<string, double> data;
+    data["track_progress"] = track_progress;
+    data["error"] = actual_error;
+    data["t"] = actual_time;
+    data["steering_angle"] = steering_angle;
+    data["torque"] = torque;
     model.get_data(data);
     transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
     tf::Quaternion q;
@@ -98,6 +108,9 @@ public:
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
     publish_pose(data);
     publish_speed(data);
+
+    parse_data(data);
+    actual_time+=dT; 
   }
 
   void publish_speed(std::map<string, double> &data)

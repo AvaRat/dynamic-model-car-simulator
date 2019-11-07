@@ -25,7 +25,7 @@ private:
     double h;   //height of center of gravity
   	double r; //wheel radius
   	double i; //moment of inertia
-  	double tau; //time t1-t0
+  	double dT; //time t1-t0
   	double g; //gravitational acceleration
   	double long_for_f; //longitudinal force of front tires
   	double long_for_r; //longitudinal force of rear tires
@@ -39,25 +39,16 @@ private:
   	double slip_angle_est_r; //slip angle of front tires (estimation)
     double max_torque;
 
-    double time = 0;
-
-    double distance_on_track = 0;
-    double error = 0;
-
 
 
 public:
 
-    double last_torque = 0;
-    double last_angle = 0;
 
-
-    Model(double tau);
+    Model(double dT, double initial_speed);
     void publish_pose(ros::Publisher *pub);
     void command(double torque, double steering_angle);
     std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
     void get_data(std::map<std::string, double> &data);
-    void set_distance_on_track(double distance_on_track);
-    void set_error(double err);
-    int wrong_slip = 0;
+    double get_max_torque();
+    int wrong_slip = 0; //zmienna pomocnicza
 };

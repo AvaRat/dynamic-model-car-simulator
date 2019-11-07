@@ -85,7 +85,7 @@ int main(int argc, char **argv)
       return -1;
     }
     param_file.close();
-    Model model(dT);
+    Model model(dT, 0);
 
     cout << "opening data file...";
     

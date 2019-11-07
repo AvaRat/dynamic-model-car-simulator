@@ -1,5 +1,8 @@
 <launch>
-    <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen" />
+    <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen" >
+      <param name="dT" type="double" value="0.001"/>
+      <param name="initial_speed" type="double" value="1.0"/>
+    </node>
 
     <!--node pkg="skidpad_planner" type="skidpad_planner" name="skidpad_planner">
         <param name="~/skipad/R" type="double" value="5.0"/>
@@ -10,7 +13,7 @@
         <param name="~/path/step" type="double" value="0.25"/>
     </node -->
 
-    <node pkg="model_cmd_converter" type="model_cmd_converter" name="model_cmd_converter" output="screen">
+    <node pkg="model_cmd_converter" type="model_cmd_converter" name="model_cmd_converter">
       <param name="KP" type="double" value="2.0" />
       <param name="KI" type="double" value="0.0" />
       <param name="KD" type="double" value="0.0" />

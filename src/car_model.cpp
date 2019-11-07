@@ -2,17 +2,17 @@
 
 // test gita!xxxxxxxxxxxxxxxxxxxxxx
 
-Model::Model(double Dt)
+Model::Model(double Dt, double initial_speed)
 {
 	//zmienne stanu dla t = 0
-  yaw_angle = 0;
+    yaw_angle = 0;
 	yaw_rate = 0;
 	lat_vel = 0;
-	long_vel = 2;
+	long_vel = initial_speed;
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
-  tau = Dt;
+    dT = Dt;
 	r = 0.3;
 	b = 2;
 	a = 2;
@@ -66,11 +66,6 @@ Model::Model(double Dt)
 
 void Model::command(double torque , double steering_angle)
 {
-    if(torque > max_torque) torque = max_torque;
-    else if(torque < -max_torque) torque = -max_torque;
-    last_torque = torque;
-
-    last_angle = steering_angle;
     /*
     std::cout << "command called\n give new coordinates";
     std::cout << "\nx_pos: \t";
@@ -106,20 +101,19 @@ void Model::command(double torque , double steering_angle)
 		lat_for_r = u * norm_load_r * (slip_angle_est_r - (slip_angle_est_r * fabs(slip_angle_est_r) / 3) + (pow(slip_angle_est_r, 3) / 27)) * sqrt(1 - pow(long_for_r / (u * norm_load_r), 2) + pow(long_for_r / cr, 2));
 
 		//obliczenie zmiennych stanu x1, x2...
-		yaw_rate = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * tau); //x1
+		yaw_rate = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * dT); //x1
 
-		lat_vel = lat_vel + (((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate)) * tau); //x2
+		lat_vel = lat_vel + (((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate)) * dT); //x2
 
-		long_vel = long_vel + ((((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate)) * tau); //x3
+		long_vel = long_vel + ((((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate)) * dT); //x3
 
-		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * tau); //x4
+		long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * dT); //x4
 
-		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * tau); //x5
-		yaw_angle = yaw_angle + (yaw_angle * tau); //x6
+		lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * dT); //x5
+		yaw_angle = yaw_angle + (yaw_angle * dT); //x6
 
-		yaw_angle = yaw_angle + (yaw_rate * tau); //x6
+		yaw_angle = yaw_angle + (yaw_rate * dT); //x6
 
-        time+=tau;
  //   std::cout << "car state changed\n";
 }
 
@@ -132,7 +126,6 @@ void Model::get_data(std::map<std::string, double> &data)
 {
     data["x"] = long_pos;
     data["y"] = lat_pos;
-    data["t"] = time;
     data["lat_vel"] = lat_vel;
     data["long_vel"] = long_vel;
     data["yaw_angle"] = yaw_angle;
@@ -145,10 +138,11 @@ void Model::get_data(std::map<std::string, double> &data)
     data["slip_angle_est_r"] = slip_angle_est_r;
     data["lat_for_f"] = lat_for_f;
     data["lat_for_r"] = lat_for_r;
-    data["steering_angle"] = last_angle;
-    data["torque"] = last_torque;
-    data["distance_on_track"] = distance_on_track;
-    data["error"] = error;
+}
+
+double Model::get_max_torque()
+{
+    return max_torque;
 }
 
 void Model::publish_pose(ros::Publisher *pub)
@@ -176,12 +170,3 @@ void Model::publish_pose(ros::Publisher *pub)
     pub->publish(marker);
 }
 
-void Model::set_distance_on_track(double new_distance)
-{
-    distance_on_track = new_distance;
-}
-
-void Model::set_error(double err)
-{
-    error = err;
-}
