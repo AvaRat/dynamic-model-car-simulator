@@ -41,13 +41,13 @@ public:
 	  data_file.close();
 	  cout << "closing data file in destructor\n";
 	}
-	Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double dT, double initial_speed)
-	:model(dT, initial_speed), dT(dT), pose_pub(pose_pub), speed_pub(speed_pub)
+	Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double DT, double initial_speed)
+	:model(DT, initial_speed), dT(DT), pose_pub(pose_pub), speed_pub(speed_pub)
 	{
 	  ROS_INFO("opening data file...  ");
 	  max_torque = model.get_max_torque();
 	
-	  data_file.open("/home/marcel/ros_ws/catkin_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+	  data_file.open("/home/marcel/Documents/Article_RTOS_2020/ros_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
 	  if(data_file.is_open())
 	  {
 		  parse_header();
@@ -60,8 +60,11 @@ public:
 
 	void next_time_step()
 	{
-		std::map<string, double> data;
+		  std::map<string, double> data;
+      model.execute_command(torque, steering_angle);
+
 	  	model.get_data(data);
+      get_simulation_data(data);
 	  	transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
 	  	tf::Quaternion q;
 	  	q.setRPY(0, 0, data["yaw_angle"]);
@@ -84,7 +87,6 @@ public:
 	{
 	  ROS_INFO("torque: %lf", msg.data[1]);
 	  ROS_INFO("steering_angle: %lf", msg.data[0]);
-	  model.command(msg.data[1], msg.data[0]);
 	  torque = msg.data[1];
 	  steering_angle = msg.data[0];
 	  if(torque > max_torque) torque = max_torque;

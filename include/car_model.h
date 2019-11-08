@@ -46,7 +46,7 @@ public:
 
 	Model(double dT, double initial_speed);
 	void publish_pose(ros::Publisher *pub);
-	void command(double torque, double steering_angle);
+	void execute_command(double torque, double steering_angle);
 	std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
 	void get_data(std::map<std::string, double> &data);
 	double get_max_torque();

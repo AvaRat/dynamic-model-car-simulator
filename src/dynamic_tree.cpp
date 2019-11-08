@@ -26,7 +26,7 @@ void Dynamic_tree::DFS(Node *node)
 
 void Dynamic_tree::update_model(Command cmd)
 {
-    dynamic_model->command(cmd.momentum, cmd.steering_angle);
+    dynamic_model->execute_command(cmd.momentum, cmd.steering_angle);
 }
 
 void Dynamic_tree::create_children(pair<double,double> momentum_max_min, pair<double, double> angle_max_min)
