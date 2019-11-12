@@ -18,9 +18,11 @@ using namespace std;
 class Simulator {
 private:
 	ros::Subscriber cmd_sub;
+	
 	ros::Publisher pose_pub;
 	ros::Publisher speed_pub;
-  	tf::TransformBroadcaster br;
+	ros::Publisher acc_pub;
+  tf::TransformBroadcaster br;
 	tf::StampedTransform transform;
 
   	Model model;
@@ -41,13 +43,13 @@ public:
 	  data_file.close();
 	  cout << "closing data file in destructor\n";
 	}
-	Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, double DT, double initial_speed)
-	:model(DT, initial_speed), dT(DT), pose_pub(pose_pub), speed_pub(speed_pub)
+	Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, ros::Publisher &acc_pub_, double DT, double initial_speed)
+	:model(DT, initial_speed), dT(DT), pose_pub(pose_pub), speed_pub(speed_pub), acc_pub(acc_pub_)
 	{
 	  ROS_INFO("opening data file...  ");
 	  max_torque = model.get_max_torque();
 	
-	  data_file.open("/home/marcel/Documents/Article_RTOS_2020/ros_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+	  data_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
 	  if(data_file.is_open())
 	  {
 		  parse_header();
@@ -73,6 +75,7 @@ public:
 	  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
 	  	publish_pose(data);
 	  	publish_speed(data);
+			publish_acceleration(data);
 	  	//parse all data to file
 	  	parse_data(data);
 	  	//time progress
@@ -85,8 +88,8 @@ public:
 
 	void cmd_callback(const std_msgs::Float64MultiArray &msg)
 	{
-	  ROS_INFO("torque: %lf", msg.data[1]);
-	  ROS_INFO("steering_angle: %lf", msg.data[0]);
+	 	//ROS_INFO("torque: %lf", msg.data[1]);
+	  //ROS_INFO("steering_angle: %lf", msg.data[0]);
 	  torque = msg.data[1];
 	  steering_angle = msg.data[0];
 	  if(torque > max_torque) torque = max_torque;
@@ -94,7 +97,8 @@ public:
 	}
 	void parse_data(std::map<std::string, double> &data)
 	{
-	  data_file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] <<"," << data["steering_angle"] << ","<< data["long_vel"]<<","<< data["lat_vel"]<<",";
+	  data_file << data["x"]<<","<<data["y"]<<","<<data["t"]<<"," << data["torque"] << "," << data["steering_angle"] << ",";
+		data_file << data["long_acc"] << ","<< data["long_vel"]<<","<< data["lat_acc"] << "," << data["lat_vel"]<<",";
 	  data_file << data["yaw_angle"]<<","<< data["yaw_rate"]<<","<< data["slip_angle_f"]<<"," <<data["slip_angle_r"] << ",";
 	  data_file << data["norm_load_f"]<<","<< data["norm_load_r"]<<","<< data["slip_angle_est_f"]<<"," ;
 	  data_file << data["slip_angle_est_r"] << "," << data["lat_for_f"] << "," << data["lat_for_r"] << ",";
@@ -116,7 +120,7 @@ public:
 		speed_msg.data = abs_speed;
 	  else
 		speed_msg.data = -abs_speed;
-	  publish_pose(data);
+
 	  speed_pub.publish(speed_msg);
 	}
 	void publish_pose(map<string, double> &data)
@@ -128,7 +132,19 @@ public:
 	  pose.pose.position.y = data["y"];
 	  pose.pose.position.z = 0;
 	  pose.pose.orientation = to_quaternion(data["yaw_angle"], 0, 0);
+
 	  pose_pub.publish(pose);
+	}
+	void publish_acceleration(map<string, double> &data)
+	{
+		std_msgs::Float64 acc_msg;
+		double abs_acc = (sqrt(pow(data["long_acc"],2) + pow(data["lat_acc"], 2)));
+		if(data["long_acc"] > 0)
+		acc_msg.data = abs_acc;
+	  else
+		acc_msg.data = -abs_acc;
+
+	  acc_pub.publish(acc_msg);
 	}
 
 	geometry_msgs::Quaternion to_quaternion(double yaw, double pitch, double roll)
@@ -156,8 +172,8 @@ public:
 	}
 	void parse_header()
 	{
-	  data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_vel" \
-		<< "," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
+	  data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_acc," << "long_vel" \
+		<< "," << "lat_acc," << "lat_vel" << "," << "yaw_angle" << "," << "yaw_rate," << "slip_angle_f," \
 		<< "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r,"\
 		<<"lat_for_f, " << "lat_for_r," <<"track_progress," << "error" << endl;
 	}

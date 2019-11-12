@@ -14,6 +14,9 @@ private:
 	double lat_pos;     //lateral position
 	double long_vel;    //longitudinal velocity
 	double lat_vel;     //lateral velocity
+	double long_acc;		//y_acceleration
+	double lat_acc;			//x_acceleration
+	
 	double yaw_angle;
 	double yaw_rate;
 	double mass;

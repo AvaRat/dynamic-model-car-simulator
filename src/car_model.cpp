@@ -8,13 +8,15 @@ Model::Model(double Dt, double initial_speed)
 	yaw_rate = 0;
 	lat_vel = 0;
 	long_vel = initial_speed;
+	lat_acc = 0;
+	long_acc = 0;
 	long_pos = 0;
 	lat_pos = 0;
 	//parametry wpisane na razie na pale
 	dT = Dt;
 	r = 0.3;
 	b = 2;
-	a = 2;
+	a = 2;	
 	mass = 1292;
 	i = 2380;
 	h = 0.3;
@@ -96,11 +98,19 @@ void Model::execute_command(double torque , double steering_angle)
 	slip_angle_est_r = cr * slip_angle_r / (u * norm_load_r);
 	lat_for_f = u * norm_load_f * (slip_angle_est_f - (slip_angle_est_f * fabs(slip_angle_est_f) / 3) + (pow(slip_angle_est_f, 3) / 27)) * sqrt(1 - pow(long_for_f / (u * norm_load_f), 2) + pow(long_for_f / cf, 2));
 	lat_for_r = u * norm_load_r * (slip_angle_est_r - (slip_angle_est_r * fabs(slip_angle_est_r) / 3) + (pow(slip_angle_est_r, 3) / 27)) * sqrt(1 - pow(long_for_r / (u * norm_load_r), 2) + pow(long_for_r / cr, 2));
+	
 	//obliczenie zmiennych stanu x1, x2...
+
 	yaw_rate = yaw_rate + ((((a * long_for_f * steering_angle) + (b * lat_for_f) - (b * lat_for_r)) / i) * dT); //x1
-	lat_vel = lat_vel + (((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate)) * dT); //x2
-	long_vel = long_vel + ((((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate)) * dT); //x3
+
+	lat_acc = ((((long_for_f * steering_angle) + lat_for_f + lat_for_r) / mass) - (long_vel * yaw_rate));
+	lat_vel = lat_vel + (lat_acc * dT); //x2
+
+	long_acc = (((long_for_f + long_for_r - (lat_for_f * steering_angle)) / mass) - (lat_vel * yaw_rate));
+	long_vel = long_vel + (long_acc * dT); //x3
+
 	long_pos = long_pos + (((-lat_vel*sin(yaw_angle)) + (long_vel * cos(yaw_angle))) * dT); //x4
+
 	lat_pos = lat_pos + (((lat_vel * cos(yaw_angle)) + (long_vel * sin(yaw_angle))) * dT); //x5
 	yaw_angle = yaw_angle + (yaw_angle * dT); //x6
 	yaw_angle = yaw_angle + (yaw_rate * dT); //x6
@@ -129,6 +139,9 @@ void Model::get_data(std::map<std::string, double> &data)
 	data["slip_angle_est_r"] = slip_angle_est_r;
 	data["lat_for_f"] = lat_for_f;
 	data["lat_for_r"] = lat_for_r;
+
+	data["long_acc"] = long_acc;
+	data["lat_acc"] = lat_acc;
 }
 
 double Model::get_max_torque()

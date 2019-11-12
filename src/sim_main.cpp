@@ -8,16 +8,19 @@ int main(int argc, char **argv)
 	double initial_speed = 0;
 	ros::init(argc, argv, "simulator");
 	ros::NodeHandle n;
-	ros::Rate r(10);
-	n.param("dT", dT, 0.01);
-	n.param("initial_speed", initial_speed, 0.0);
-	ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("pose", 1);
-	ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("speed", 1);
-	Simulator simulator(pose_pub, speed_pub, dT, initial_speed);  
+	ros::NodeHandle pnh("~");
+	ros::Rate r(100);
+	pnh.param("dT", dT, 0.01);
+	pnh.param("initial_speed", initial_speed, 0.0);
+	ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("model_pose", 1);
+	ros::Publisher speed_pub = n.advertise<std_msgs::Float64>("model_speed", 1);
+	ros::Publisher acc_pub = n.advertise<std_msgs::Float64>("model_acceleration", 1);
+	Simulator simulator(pose_pub, speed_pub, acc_pub, dT, initial_speed);  
 	ros::Subscriber distance_sub = n.subscribe("s", 1, &Simulator::track_progress_callback, &simulator);
 	ros::Subscriber error_pub = n.subscribe("d", 1, &Simulator::error_callback, &simulator);
+	// command subscriber
 	ros::Subscriber cmd_sub = n.subscribe("model_control", 10, &Simulator::cmd_callback, &simulator);
-	simulator.set_cmd_subscriber(cmd_sub);  
+	simulator.set_cmd_subscriber(cmd_sub);
 	ROS_INFO("started simulation with \ndT = %lf\ninitial_speed = %lf", dT, initial_speed);
 	while(ros::ok())
 	{
