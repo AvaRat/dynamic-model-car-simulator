@@ -14,6 +14,7 @@
 
 double dT= 0;
 double cmd_change_duration= 1;  //seconds
+double cmd_frequency = 10;
 
 struct Cmd{
     double torque;
@@ -44,8 +45,10 @@ vector<Cmd> read_file(fstream &file)
     string param_name;
     file >> param_name; //skip first word
     file >> dT;  // get dT
-    file >> param_name;
+    file >> param_name; //skip cmd_change_duration string
     file >> cmd_change_duration;
+    file >> param_name;
+    file >> cmd_frequency;
     file >> param_name >>param_name >> param_name;  //ignore first line
     while(file >> torque >> angle >> duration)
     {
@@ -85,7 +88,7 @@ int main(int argc, char **argv)
       return -1;
     }
     param_file.close();
-    Model model(dT);
+    Model model(dT, 0);
 
     cout << "opening data file...";
     
@@ -109,7 +112,7 @@ int main(int argc, char **argv)
         size_t n_cmd = (size_t)(*it).duration/dT;
         for(size_t n=0; n<n_cmd; n++)
         {
-            model.command((*it).torque, (*it).angle);
+            model.execute_command((*it).torque, (*it).angle);
             model.get_data(data);
             parse_data(data_file, data);
             model.publish_pose(&pose_pub);
@@ -123,7 +126,7 @@ int main(int argc, char **argv)
             for(size_t i=0; i<change_n_cmd; i++)
             {
                // cout <<"ok\n";
-                model.command((*it).torque-(torque_increment*i), (*it).angle-(angle_increment*i));
+                model.execute_command((*it).torque-(torque_increment*i), (*it).angle-(angle_increment*i));
                 model.get_data(data);
                 parse_data(data_file, data);
                 model.publish_pose(&pose_pub);

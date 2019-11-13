@@ -4,3 +4,6 @@ simulator
 CMakeCache.txt
 cmake_install.cmake
 .vscode/
+.ipynb_checkpoints/
+article_ws.code-workspace
+data.csv
