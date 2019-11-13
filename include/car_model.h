@@ -53,5 +53,6 @@ public:
 	std::vector<double> get_position(); // returns long_pos, lat_pos and yaw_angle
 	void get_data(std::map<std::string, double> &data);
 	double get_max_torque();
+	void set_friction_coef(double);
 	int wrong_slip = 0; //zmienna pomocnicza
 };
