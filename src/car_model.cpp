@@ -174,3 +174,8 @@ void Model::publish_pose(ros::Publisher *pub)
 	pub->publish(marker);
 }
 
+void Model::set_friction_coef(double u_)
+{
+	u = u_;
+}
+

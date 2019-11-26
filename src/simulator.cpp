@@ -191,4 +191,8 @@ public:
 		<< "slip_angle_r," << "norm_load_f," << "norm_load_r," << "slip_angle_est_f," << "slip_angle_est_r,"\
 		<<"lat_for_f, " << "lat_for_r," <<"track_progress," << "error" << endl;
 	}
+	void set_friction_coef(double u_)
+	{
+		model.set_friction_coef(u_);
+	}
 };
