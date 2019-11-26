@@ -1,7 +1,7 @@
 <launch>
     <arg name = "friction_coef" default = "0.9"/>
 
-    <node pkg="simulator" type="keyboard_steering.py" name="keyboard_steering" output="screen">
+    <node pkg="simulator" type="keyboard_steering.py" name="sim_manager" output="screen">
       <param name="publish_rate" type="double" value="10"/>
       <param name="default_speed" type="double" value="2"/>
     </node>
@@ -48,7 +48,6 @@
     <param name="max_v" type="double" value="5.0" />
     <param name="friction_coefficient" type="double" value="$(arg friction_coef)"/>
 
-    <remap from="closest_path_points" to="path"/>
     <remap from="speed" to="model_speed"/>
     <remap from="target_control" to="mpc_control"/>
   </node>

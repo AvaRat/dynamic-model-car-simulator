@@ -2,12 +2,13 @@
 import rospy
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Bool
 from selfie_msgs.msg import MPCControl
 from pynput import keyboard
 
 class msg_manager:
     # 1 -> manually     2-> semi semi_automat   3-> full automat
-    def __init__(self, steering_mode = 1, force_stop = 0, msg_full_auto = MPCControl(),
+    def __init__(self, pause_pub, steering_mode = 1, force_stop = 0, msg_full_auto = MPCControl(),
                 default_speed = 1,
                 msg_semi_auto = MPCControl(),msg_manual = MPCControl(), 
                 default_left = 0.4, default_right = -0.4, speed = 0, steering_angle = 0):
@@ -21,6 +22,8 @@ class msg_manager:
         self.default_right = default_right
         self.speed = speed
         self.steering_angle = steering_angle
+        self.pause_pub = pause_pub
+        self.paused = True
 
 
     def cmd_callback(self, msg):
@@ -29,7 +32,7 @@ class msg_manager:
         # semi automat
         elif self.steering_mode == 2:
             self.msg_semi_auto = msg
-            self.msg_semi_auto.drive.speed = self.speed
+            self.msg_semi_auto.speed = self.speed
 
 
     def on_press(self, key):
@@ -93,6 +96,15 @@ class msg_manager:
                     #rospy.loginfo('backwards')
                     self.speed = - self.default_speed
                     self.steering_angle = 0
+            elif(key.char == 'p'):
+                pause_msg = Bool()
+                if(self.paused == True):
+                    pause_msg.data = False
+                    self.paused = False
+                else:
+                    pause_msg.data = True
+                    self.paused = True
+                self.pause_pub.publish(pause_msg)
 
         except AttributeError:
             pass
@@ -134,10 +146,10 @@ if __name__ == '__main__':
     rospy.loginfo('default_steering_speed = ' + str(default_speed))
     rospy.loginfo('sim_controls_publish_rate = ' + str(publish_rate))
 
+    cmd_pub = rospy.Publisher('/target_control', MPCControl, queue_size=1)
+    pause_pub = rospy.Publisher('sim_pause', Bool, queue_size=1)
 
-    manager = msg_manager(default_speed=default_speed)
-    pub = rospy.Publisher('/target_control', MPCControl, queue_size=1)
-    
+    manager = msg_manager(default_speed=default_speed, pause_pub=pause_pub)
     rospy.Subscriber('/mpc_control', MPCControl, manager.cmd_callback)
 
     listener = keyboard.Listener(
@@ -146,7 +158,7 @@ if __name__ == '__main__':
     listener.start()
     rate = rospy.Rate(publish_rate)
     while not rospy.is_shutdown():
-        manager.publish(pub)
+        manager.publish(cmd_pub)
         rate.sleep()
 
     rospy.signal_shutdown("manually closed")
