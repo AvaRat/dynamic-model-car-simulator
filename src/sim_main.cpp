@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	ros::Subscriber error_pub = n.subscribe("d", 1, &Simulator::error_callback, &simulator);
 	ros::Subscriber pause_sub = n.subscribe("pause", 1, &Simulator::pause_callback, &simulator);
 	// command subscriber
-	ros::Subscriber cmd_sub = n.subscribe("model_control", 10, &Simulator::cmd_callback, &simulator);
+	ros::Subscriber cmd_sub = n.subscribe("model_control", 10, &Simulator::model_control_callback, &simulator);
 	simulator.set_cmd_subscriber(cmd_sub);
 	ROS_INFO("started simulation with \ndT = %lf\ninitial_speed = %lf", dT, initial_speed);
 	char ch;

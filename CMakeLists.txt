@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
   geometry_msgs
   tf
+  std_msgs
+  selfie_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -51,8 +53,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   Message1.msg
-#   Message2.msg
+#   ModelControl.msg
+#   MPCControl.msg
 # )
 
 ## Generate services in the 'srv' folder
@@ -72,7 +74,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   visualization_msgs
+#   std_msgs
 # )
 
 ################################################
@@ -109,6 +111,7 @@ catkin_package(
 #  LIBRARIES simulator
 #  CATKIN_DEPENDS roscpp rospy visualization_msgs
 #  DEPENDS system_lib
+#CATKIN_DEPENDS message_runtime
 )
 
 ###########

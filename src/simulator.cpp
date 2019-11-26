@@ -1,18 +1,19 @@
-#include<iostream>
-#include<vector>
-#include<fstream>
-
-#include"../include/car_model.h"
+#include <iostream>
+#include <vector>
+#include <fstream>
+ 
+#include "../include/car_model.h"
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Pose2D.h>
 #include <nav_msgs/Path.h>
-#include"std_msgs/Bool.h"
+#include "std_msgs/Bool.h"
 #include "std_msgs/Float64.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float64MultiArray.h"
+#include "selfie_msgs/ModelControl.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ private:
 	ros::Publisher pose_pub;
 	ros::Publisher speed_pub;
 	ros::Publisher acc_pub;
-  tf::TransformBroadcaster br;
+  	tf::TransformBroadcaster br;
 	tf::StampedTransform transform;
 
   	Model model;
@@ -34,7 +35,7 @@ private:
   	double torque = 0;  //last torque command
   	double steering_angle = 0;  //last steering_angle command
   	double max_torque = 0;  //max torque that will be passed to
-		bool paused = true;			//variable to pause simulator and not execute new commands/ however still publishing tf and pose
+	bool paused = true;			//variable to pause simulator and not execute new commands/ however still publishing tf and pose
 
   	fstream data_file;
 
@@ -50,8 +51,11 @@ public:
 	{
 	  ROS_INFO("opening data file...  ");
 	  max_torque = model.get_max_torque();
-	
-	  data_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/data.csv", fstream::out);
+
+	  string file_path = __FILE__;
+      string dir_path = file_path.substr(0, file_path.rfind("/")-3);
+	  cout << dir_path << endl;
+	  data_file.open(dir_path+"/data.csv", fstream::out);
 	  if(data_file.is_open())
 	  {
 		  parse_header();
@@ -96,12 +100,12 @@ public:
 	  cmd_sub = sub;
 	}
 
-	void cmd_callback(const std_msgs::Float64MultiArray &msg)
+	void model_control_callback(const selfie_msgs::ModelControl &msg)
 	{
 	 	//ROS_INFO("torque: %lf", msg.data[1]);
 	  //ROS_INFO("steering_angle: %lf", msg.data[0]);
-	  torque = msg.data[1];
-	  steering_angle = msg.data[0];
+	  torque = msg.torque;
+	  steering_angle = msg.steering_angle;
 	  if(torque > max_torque) torque = max_torque;
 	  else if(torque < -max_torque) torque = -max_torque;
 	}

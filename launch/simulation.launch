@@ -1,4 +1,9 @@
 <launch>
+    <node pkg="simulator" type="keyboard_steering.py" name="keyboard_steering" output="screen">
+      <param name="publish_rate" type="double" value="10"/>
+      <param name="default_speed" type="double" value="2"/>
+    </node>
+
     <node pkg="simulator" type="ros_simulator" name="simulator_node" output="screen" >
       <param name="dT" type="double" value="0.001"/>
       <param name="initial_speed" type="double" value="2.0"/>
@@ -38,8 +43,9 @@
     <param name="tyre_radius" type="double" value="0.3" />
     <param name="cornering_safety_weight" type="double" value="20.0" />
     <param name="max_v" type="double" value="5.0" />
-    <remap from="closest_path_points" to="path"/>
+
     <remap from="speed" to="model_speed"/>
+    <remap from="target_control" to="mpc_control"/>
   </node>
 
 </launch>
