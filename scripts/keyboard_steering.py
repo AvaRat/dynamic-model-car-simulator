@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 import rospy
+import os
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import Bool
 from selfie_msgs.msg import MPCControl
 from pynput import keyboard
+import pygame
+
+meta_path = os.path.abspath(os.path.join(__file__, '../../metadata'))
+pygame.init()
+pygame.mixer.init()
+
 
 class msg_manager:
     # 1 -> manually     2-> semi semi_automat   3-> full automat
@@ -39,17 +46,26 @@ class msg_manager:
         try:
             # space changes steering mode
             if key == keyboard.Key.space:
+                mode = ''
                 if self.steering_mode == 1:
-                    rospy.loginfo('SEMI_automat mode')
+                    mode='semi_automatic_mode'
+                    rospy.loginfo(mode)
                     self.steering_mode = 2
 
                 elif self.steering_mode == 2:
-                    rospy.loginfo('FULL_automat mode')
+                    mode='full_automatic_mode'
+                    rospy.loginfo(mode)
                     self.steering_mode = 3
 
-                elif self.steering_mode == 3:
-                    rospy.loginfo('MANUAL mode')
+                else:
+                    mode='manual_mode'
+                    rospy.loginfo(mode)
+
                     self.steering_mode = 1
+                sound_file = os.path.join(meta_path, mode+'.mp3')
+                pygame.mixer.music.load(sound_file)
+            #    pygame.mixer.music.set_volume(1)
+                pygame.mixer.music.play()
             if(key.char == 'r'):
                 if(self.force_stop == 1):
                     self.speed = self.default_speed/2

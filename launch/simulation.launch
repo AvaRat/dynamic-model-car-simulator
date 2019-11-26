@@ -2,7 +2,7 @@
     <arg name = "friction_coef" default = "0.9"/>
 
     <node pkg="simulator" type="keyboard_steering.py" name="sim_manager" output="screen">
-      <param name="publish_rate" type="double" value="10"/>
+      <param name="publish_rate" type="double" value="100"/>
       <param name="default_speed" type="double" value="2"/>
     </node>
 
