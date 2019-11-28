@@ -35,7 +35,7 @@ private:
     double torque = 0;  //last torque command
     double steering_angle = 0;  //last steering_angle command
     double max_torque = 0;  //max torque that will be passed to
-    bool paused = false;			//variable to pause simulator and not execute new commands/ however still publishing tf and pose
+    bool paused = true;			//variable to pause simulator and not execute new commands/ however still publishing tf and pose
 
     fstream data_file;
 
@@ -70,7 +70,7 @@ public:
     {
         std::map<string, double> data;
         if(paused == false)
-        model.execute_command(torque, steering_angle);
+            model.execute_command(torque, steering_angle);
         model.get_data(data);
         get_simulation_data(data);
         transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
