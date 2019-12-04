@@ -32,10 +32,18 @@ private:
     double actual_time = 0; //seconds
     double actual_error = 0; //from track in meters
     double track_progress = 0;
-    double torque = 0;  //last torque command
-    double steering_angle = 0;  //last steering_angle command
+    double torque = 0;  //actual torque command
+    double previous_torque = 0; //previous torque command
+    double steering_angle = 0;  //actual steering_angle command
+    double previous_angle = 0;  //previous steering_angle command
+    double change_n_cmd = 10;   //number of commands that will be executed while switching commands
+
     double max_torque = 0;  //max torque that will be passed to
+    double steering_angle_iter = 0.01; 
+    double torque_iter = 1;
     bool paused = true;			//variable to pause simulator and not execute new commands/ however still publishing tf and pose
+
+    vector<double> big_change_times;
 
     fstream data_file;
 
@@ -43,8 +51,11 @@ public:
     Simulator():model(0, 0) {}  //DO NOT USE default constructor
     ~Simulator()
     {
-      data_file.close();
-      cout << "closing data file in destructor\n";
+        cout << "cmd big change times\n";
+        for(auto it=big_change_times.begin(); it!=big_change_times.end(); it++)
+            cout << *it << endl;
+        data_file.close();
+        cout << "closing data file in destructor\n";
     }
     Simulator(ros::Publisher &pose_pub, ros::Publisher &speed_pub, ros::Publisher &acc_pub_, double DT, double initial_speed)
     :model(DT, initial_speed), dT(DT), pose_pub(pose_pub), speed_pub(speed_pub), acc_pub(acc_pub_)
@@ -70,7 +81,38 @@ public:
     {
         std::map<string, double> data;
         if(paused == false)
-            model.execute_command(torque, steering_angle);
+        {
+            if(fabs(steering_angle-previous_angle) > 0.1)
+            {
+                big_change_times.push_back(actual_time);
+                //command gradual change
+                double angle_increment = (previous_angle - steering_angle) / change_n_cmd;
+                for(size_t i=0; i<change_n_cmd; i++)
+                {
+                    //cout <<"ok\n";
+                    model.execute_command(torque, previous_angle-(angle_increment*i));
+                    data.clear();
+                    model.get_data(data);
+                    get_simulation_data(data, previous_angle-(angle_increment*i));
+                    parse_data(data);
+                    // r.sleep();
+                    //data.clear();
+                    actual_time+=dT;
+                    
+                }
+                big_change_times.push_back(actual_time);
+                previous_angle = steering_angle;
+            } else
+            {
+                model.execute_command(torque, steering_angle);
+                model.get_data(data);
+                get_simulation_data(data);
+                parse_data(data);
+                //data.clear();
+                actual_time+=dT;
+            }
+        }
+        data.clear();
         model.get_data(data);
         get_simulation_data(data);
         transform.setOrigin( tf::Vector3(data["x"], data["y"], 0.0));
@@ -82,13 +124,6 @@ public:
         publish_pose(data);
         publish_speed(data);
         publish_acceleration(data);
-        //parse all data to file
-        if(!paused)
-        {
-            parse_data(data);
-            //time progress
-            actual_time+=dT; 
-        }
     }
     void pause_callback(std_msgs::Bool msg)
     {
@@ -103,7 +138,9 @@ public:
     {
          //ROS_INFO("torque: %lf", msg.data[1]);
         //ROS_INFO("steering_angle: %lf", msg.data[0]);
+        previous_torque = torque;
         torque = msg.torque;
+        previous_angle = steering_angle;
         steering_angle = msg.steering_angle;
         if(torque > max_torque) torque = max_torque;
         else if(torque < -max_torque) torque = -max_torque;
@@ -182,7 +219,15 @@ public:
         data["t"] = actual_time;
         data["steering_angle"] = steering_angle;
         data["torque"] = torque;
-    }   
+    }
+    void get_simulation_data(map<string, double> &data, double actual_angle)
+    {
+        data["track_progress"] = track_progress;
+        data["error"] = actual_error;
+        data["t"] = actual_time;
+        data["steering_angle"] = actual_angle;
+        data["torque"] = torque;    
+    }
     void parse_header()
     {
         data_file << "x" << "," << "y" << "," << "t" << "," <<  "torque," << "steering_angle" << "," << "long_acc," << "long_vel" \

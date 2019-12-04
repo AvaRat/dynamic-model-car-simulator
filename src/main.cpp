@@ -12,7 +12,7 @@
 #include "std_msgs/Float64MultiArray.h"
 
 
-double dT= 0;
+double dT= 0.01;
 double cmd_change_duration= 1;  //seconds
 double cmd_frequency = 10;
 
@@ -75,6 +75,7 @@ int main(int argc, char **argv)
     size_t change_n_cmd = 0;
     vector<Cmd> commands;
     fstream param_file;
+    double actual_time = 0;
     param_file.open("/home/marcel/catkin_ws/src/dynamic-model-car-simulator/params.txt");
     cout << "opening params.txt ...";
     commands = read_file(param_file);
@@ -88,7 +89,7 @@ int main(int argc, char **argv)
       return -1;
     }
     param_file.close();
-    Model model(dT, 0);
+    Model model(dT, 0.1);
 
     cout << "opening data file...";
     
@@ -104,34 +105,38 @@ int main(int argc, char **argv)
     model.get_data(data);
     parse_description(data_file);
     //model.command(0,0);
-    parse_data(data_file, data);
 
     //main loop of commands
-    for(auto it=commands.begin();it!=commands.end(); it++)
+    for(auto it=commands.begin();it!=commands.end()-1; it++)
     {
         size_t n_cmd = (size_t)(*it).duration/dT;
         for(size_t n=0; n<n_cmd; n++)
         {
             model.execute_command((*it).torque, (*it).angle);
             model.get_data(data);
+            data["t"] = actual_time;
+            data["torque"] = (*it).torque;
+            data["steering_angle"] = (*it).angle;
             parse_data(data_file, data);
             model.publish_pose(&pose_pub);
+            actual_time+=dT;
             // r.sleep();
         }
         //command gradual change
         double angle_increment = ((*it).angle - (*(it+1)).angle) / change_n_cmd;
         double torque_increment = ((*it).torque - (*(it+1)).torque) / change_n_cmd;
-        if(it != commands.end()-1)
+        for(size_t i=0; i<change_n_cmd; i++)
         {
-            for(size_t i=0; i<change_n_cmd; i++)
-            {
-               // cout <<"ok\n";
-                model.execute_command((*it).torque-(torque_increment*i), (*it).angle-(angle_increment*i));
-                model.get_data(data);
-                parse_data(data_file, data);
-                model.publish_pose(&pose_pub);
-                // r.sleep();
-            }
+           // cout <<"gradual change ok\ntime: " << actual_time << endl;
+            model.execute_command((*it).torque-(torque_increment*i), (*it).angle-(angle_increment*i));
+            model.get_data(data);
+            data["t"] = actual_time;
+            data["torque"] = (*it).torque-(torque_increment*i);
+            data["steering_angle"] = (*it).angle-(angle_increment*i);
+            parse_data(data_file, data);
+            model.publish_pose(&pose_pub);
+            actual_time+=dT;
+            // r.sleep();
         }
     }
     cout << "closing data file ... ";

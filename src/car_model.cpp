@@ -4,7 +4,7 @@
 Model::Model(double Dt, double initial_speed)
 {
 	//zmienne stanu dla t = 0
-	yaw_angle = 0;
+	yaw_angle = 0.1;
 	yaw_rate = 0;
 	lat_vel = 0;
 	long_vel = initial_speed;
@@ -82,7 +82,7 @@ void Model::execute_command(double torque , double steering_angle)
 	//przeliczenie zadanego momentu na sile wzdluzna kola
 	long_for_f = torque / r;
 	long_for_r = long_for_f; //zakladam rowne rozlozenie momentu na os przod/tyl
-	if(fabs(long_vel) < 0.0001)
+	if(fabs(long_vel) < 0.01)
 	{
 		slip_angle_f = 0;
 		slip_angle_r = 0;
