@@ -18,7 +18,7 @@ class msg_manager:
     def __init__(self, pause_pub, steering_mode = 1, force_stop = 0, msg_full_auto = MPCControl(),
                 default_speed = 1,
                 msg_semi_auto = MPCControl(),msg_manual = MPCControl(), 
-                default_left = 0.3, default_right = -0.3, speed = 0, steering_angle = 0):
+                default_left = 0.6, default_right = -0.6, speed = 0, steering_angle = 0):
         self.steering_mode = steering_mode
         self.force_stop = force_stop
         self.msg_full_auto = msg_full_auto
