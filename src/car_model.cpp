@@ -15,8 +15,8 @@ Model::Model(double Dt, double initial_speed)
 	//parametry wpisane na razie na pale
 	dT = Dt;
 	r = 0.3;
-	b = 2;
-	a = 2;	
+	b = 1;
+	a = 1;	
 	mass = 1292;
 	i = 2380;
 	h = 0.3;

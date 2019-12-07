@@ -10,7 +10,7 @@
       <param name="dT" type="double" value="0.001"/>
       <param name="initial_speed" type="double" value="0.1"/>
       <param name="friction_coef" type="double" value="$(arg friction_coef)"/>
-      <param name="real_time_ratio" type="double" value="0.1"/> <!-- 1=real time, 10=10*faster itp-->
+      <param name="real_time_ratio" type="double" value="1"/> <!-- 1=real time, 10=10*faster itp-->
     </node>
 
     <node pkg="skidpad_planner" type="skidpad_planner" name="skidpad_planner">
@@ -26,7 +26,7 @@
       <param name="KP" type="double" value="2.0" />
       <param name="KI" type="double" value="0.0" />
       <param name="KD" type="double" value="0.0" />
-      <param name="min_speed" type="double" value="0.1"/>
+      <param name="min_speed" type="double" value="1"/>
     </node>
 
  <node pkg="mpc" type="mpc" name="mpc" output="screen">
